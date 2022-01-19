@@ -7,6 +7,7 @@ class BaseModel(models.Model):
     """
     Abstract model that acts as parent all the concreate models in the project.
     """
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.CharField(max_length=250, null=True, blank=True)

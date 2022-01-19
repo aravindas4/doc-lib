@@ -1,4 +1,4 @@
-exclude: 'docs|node_modules|.git|.tox|.html|agora|config/settings'
+exclude: '.git|.tox|.html|agora|settings'
 default_stages: [commit]
 fail_fast: true
 
