@@ -14,7 +14,7 @@ class BaseModel(models.Model):
     Abstract model that acts as parent all the concreate models in the project.
     """
 
-    # Makes sure the an pk is tamper-proof and unpredictable
+    # Makes sure that an pk is tamper-proof and unpredictable
     id = models.CharField(
         max_length=12, default=get_short_uuid, editable=False, primary_key=True
     )
