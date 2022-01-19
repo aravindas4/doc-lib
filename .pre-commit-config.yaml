@@ -1,0 +1,11 @@
+exclude: 'docs|node_modules|.git|.tox|.html|agora|config/settings'
+default_stages: [commit]
+fail_fast: true
+
+repos:
+  - repo: https://github.com/psf/black
+    rev: 21.12b0
+    hooks:
+      - id: black
+        language_version: python3
+        args: ["-l 79"]
