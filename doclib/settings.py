@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from decouple import config
 from pathlib import Path
 
+from rest_framework.settings import api_settings
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,7 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-@p7=%s%td^h7)x=+$)hcmvlv+8@o!_%_%o_nu)fdu$!_(gw5sp'
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -116,8 +117,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
     "COERCE_DECIMAL_TO_STRING": False,
+    # Prevents conversion of decimal into string
 }
 
+api_settings.DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/

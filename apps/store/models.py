@@ -1,7 +1,10 @@
 import uuid
 
+from typing import AnyStr
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+from rest_framework.authtoken.models import Token
 
 
 def get_short_uuid():
@@ -32,8 +35,11 @@ class User(AbstractUser, BaseModel):
     This is added so that in the future more fields related to user can added.
     """
 
-    def __str__(self):
+    def __str__(self) -> AnyStr:
         return f"{self.get_username()}, {self.email} ({self.id})"
+
+    def get_token(self) -> AnyStr:
+        return Token.objects.get_or_create(user=self).key
 
 
 class Document(BaseModel):
