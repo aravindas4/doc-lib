@@ -2,10 +2,11 @@ exclude: '.git|.tox|.html|agora|settings'
 default_stages: [commit]
 fail_fast: true
 
+# Auto formats the code
 repos:
   - repo: https://github.com/psf/black
     rev: 21.12b0
     hooks:
       - id: black
         language_version: python3
-        args: ["-l 79"]
+        args: ["-l 79"]  # Code line-length, 79 characters
