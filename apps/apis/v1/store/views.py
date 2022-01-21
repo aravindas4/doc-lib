@@ -1,3 +1,5 @@
+from typing import AnyStr
+
 from django.db.models import Q
 
 from rest_framework.decorators import action
@@ -32,7 +34,7 @@ class DocumentViewSet(ModelViewSet):
     queryset = model.objects.all()
 
     def get_queryset(self):
-        if self.action in ["list", "retrieve", "partial_update"]:
+        if self.action in ["list", "retrieve", "partial_update", "download"]:
             # Owner or Shared User
             return self.queryset.filter(
                 Q(owner_id=self.request.user.id)
@@ -59,6 +61,16 @@ class DocumentViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         instance.add_shared_users(serializer.validated_data["id_list"])
+        return self.retrieve(request, *args, **kwargs)
+
+    @action(methods=["POST"], detail=True, url_path="download")
+    def download(self, request, *args, **kwargs):
+        instance = self.get_object()
+        api_caller: User = request.user
+        user_type: AnyStr = instance.get_user_type(api_caller)
+        operation: AnyStr = "Download"
+        # Log the download operation
+        instance.append_content_to_file(f"{user_type} - {operation}")
         return self.retrieve(request, *args, **kwargs)
 
 

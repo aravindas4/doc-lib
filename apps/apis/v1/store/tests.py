@@ -405,6 +405,56 @@ class DocumentAPITest(APITest):
         # Assert
         self.assertEqual(response.status_code, 204)
 
+    def test_download(self):
+        # Case 1: Owner
+        # Arrange
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.get_auth_header(self.default.owner)
+        )
+        url_name = "store-v1:document-download"
+        url = reverse(url_name, kwargs={"pk": self.default.id})
+        expected_response = {
+            "id": self.default.id,
+            "owner": self.default.owner_id,
+            "file_url": None,
+        }
+
+        # Act
+        response = self.client.post(url, data={})
+
+        # Assert
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), expected_response)
+
+        # Case 2: Non shared User
+        # Arrange
+        user1 = UserFactory()
+        self.client.credentials(HTTP_AUTHORIZATION=self.get_auth_header(user1))
+        expected_response = {"detail": "Not found."}
+
+        # Act
+        response = self.client.post(url, data={})
+
+        # Assert
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), expected_response)
+
+        # Case: Shared User
+        # Arrange
+        UserDocumentFactory(user=user1, document=self.default)
+        expected_response = {
+            "id": self.default.id,
+            "owner": self.default.owner_id,
+            "file_url": None,
+        }
+
+        # Act
+        response = self.client.post(url, data={})
+
+        # Assert
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), expected_response)
+
 
 class UserAPITest(APITest):
     @classmethod
