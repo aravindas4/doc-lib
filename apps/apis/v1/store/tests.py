@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from apps.store.factory import DocumentFactory
+from apps.store.factory import DocumentFactory, UserFactory
 from apps.utils.tests import APITest
 
 
@@ -123,6 +123,67 @@ class DocumentAPITest(APITest):
         # Assert
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json(), expected_response)
+
+    def test_share(self):
+        # Case 1: First attempt
+        # Arrange
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.get_auth_header(self.default.owner)
+        )
+        url_name = "store-v1:document-share"
+        url = reverse(url_name, kwargs={"pk": self.default.id})
+        user1 = UserFactory()
+        data = {"id_list": [user1.id, "HHHHHHHHH"]}  # Invalid ID
+        expected_response = {
+            "id": self.default.id,
+            "owner": self.default.owner_id,
+            "file_url": None,
+        }
+
+        # Act
+        response = self.client.post(url, data=data)
+        self.default.refresh_from_db()
+
+        # Assert
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), expected_response)
+        # Maks sure that user is added to the shared list
+        self.assertTrue(self.default.shared_users.filter(id=user1.id).exists())
+        # Only 1 user is present
+        self.assertEqual(self.default.shared_users.count(), 1)
+
+        # Case 2: Try again
+        # Arrange
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.get_auth_header(self.default.owner)
+        )
+        url_name = "store-v1:document-share"
+        url = reverse(url_name, kwargs={"pk": self.default.id})
+        user2 = UserFactory()
+        data = {
+            "id_list": [
+                user1.id,  # Already added
+                user2.id,  # New
+                "HHHHHHHHH",  # Invalid ID
+            ]
+        }
+        expected_response = {
+            "id": self.default.id,
+            "owner": self.default.owner_id,
+            "file_url": None,
+        }
+
+        # Act
+        response = self.client.post(url, data=data)
+        self.default.refresh_from_db()
+
+        # Assert
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), expected_response)
+        # Maks sure that user is added to the shared list
+        self.assertTrue(self.default.shared_users.filter(id=user2.id).exists())
+        # Only 2 users are present
+        self.assertEqual(self.default.shared_users.count(), 2)
 
     def test_put(self):
         pass

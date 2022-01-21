@@ -27,3 +27,9 @@ class DocumentSerializer(serializers.ModelSerializer):
         # Since file object is created
         instance.refresh_from_db()
         return instance
+
+
+class StringListSerializer(serializers.Serializer):
+    id_list = serializers.ListField(
+        child=serializers.CharField(min_length=1), required=True
+    )
