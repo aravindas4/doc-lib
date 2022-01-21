@@ -21,11 +21,10 @@ class DocumentAPITest(APITest):
         pass
 
     def test_list(self):
+        # Arrange
         self.client.credentials(
             HTTP_AUTHORIZATION=self.get_auth_header(self.default.owner)
         )
-        response = self.client.get(self.list_url)
-        self.assertEqual(response.status_code, 200)
         expected_response = {
             "count": 1,
             "next": None,
@@ -34,10 +33,30 @@ class DocumentAPITest(APITest):
                 {"id": self.default.id, "owner": self.default.owner_id}
             ],
         }
+
+        # Act
+        response = self.client.get(self.list_url)
+
+        # Arrange
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), expected_response)
 
     def test_detail(self):
-        pass
+        # Arrange
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.get_auth_header(self.default.owner)
+        )
+        expected_response = {
+            "id": self.default.id,
+            "owner": self.default.owner_id,
+        }
+
+        # Act
+        response = self.client.get(self.default_url)
+
+        # Arrange
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), expected_response)
 
     def test_put(self):
         pass
