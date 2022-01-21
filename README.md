@@ -7,12 +7,13 @@ The Backend APIs for Document Management.
 1. Need to make sure [python3.8+](https://www.python.org/downloads/release/python-380/) is installed on the machine
 2. Need to create and activate a [virtualenv](https://docs.python.org/3/library/venv.html)
 ```bash
-virtualenv -p python3 doc-lib
+virtualenv -p python3.8 doc-lib
 source ./doc-lib/bin/activate
 ```
+
 3. Installed the dependencies
 ```bash
-pip3 install requiremnets.txt
+pip3 install -r requiremnets.txt
 ```
 4. Move into environemnt and clone the [repo](https://github.com/aravindas4/doc-lib)
 5. Duplicate `.env.example` file into `.env` and replace the dummy values with genuine
@@ -31,8 +32,8 @@ python manage runserver
 ```
 
 ## Local Links:
-1. Admin: `http://127.0.0.1:8000/admin/`
-Default user:` admin` 
+1. Admin: `http://127.0.0.1:8000/admin/`. Example:
+user:` admin` 
 password: `something`
 2. Swagger: `http://127.0.0.1:8000/swagger/`
 3. Redoc: `http://127.0.0.1:8000/redoc/`
@@ -53,6 +54,10 @@ Python 3.8, Django, Django Rest Framework, Sqlite
 9. All list APIs are [paginated](https://www.django-rest-framework.org/api-guide/pagination/)
 10. Second app is `utils` which houses various utils in the code
 11. [pytest](https://docs.pytest.org/en/6.2.x/) is used as testing framework
+12. Each (Most) has ModelViewset class and a APITest class. Test class contains
+test for list, detail , put, patch, delete and custom action of resource (model)
+13. APIs are stored version wise and further app wise. Inside each app, 
+further resource wise.
 
 ## Database Design
 There are 3 models

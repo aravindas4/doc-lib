@@ -75,6 +75,8 @@ class DocumentViewSet(ModelViewSet):
 
 
 class UserViewSet(ReadOnlyModelViewSet):
+    """Provides only the list and detail APIs."""
+
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
     model = User

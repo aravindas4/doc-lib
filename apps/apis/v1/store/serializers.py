@@ -46,7 +46,9 @@ class DocumentSerializer(serializers.ModelSerializer):
         user_type: AnyStr = instance.get_user_type(api_caller)
         operation: AnyStr = "Edit"
 
-        if self.partial is False:  # This is a re-upload
+        if (
+            self.partial is False
+        ):  # This is a re-upload ie, if partial is False
             operation = "Upload"
 
             # Truncate the file content
