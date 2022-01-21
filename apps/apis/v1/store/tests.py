@@ -60,6 +60,13 @@ class DocumentAPITest(APITest):
         # Assert
         self.assertEqual(response.status_code, 401)
 
+        # Share
+        # Act
+        response = self.client.post(f"{self.default_url}share/", data={})
+
+        # Assert
+        self.assertEqual(response.status_code, 401)
+
     def test_list(self):
         # Arrange
         self.client.credentials(
@@ -142,7 +149,6 @@ class DocumentAPITest(APITest):
 
         # Act
         response = self.client.post(url, data=data)
-        self.default.refresh_from_db()
 
         # Assert
         self.assertEqual(response.status_code, 200)
@@ -154,11 +160,6 @@ class DocumentAPITest(APITest):
 
         # Case 2: Try again
         # Arrange
-        self.client.credentials(
-            HTTP_AUTHORIZATION=self.get_auth_header(self.default.owner)
-        )
-        url_name = "store-v1:document-share"
-        url = reverse(url_name, kwargs={"pk": self.default.id})
         user2 = UserFactory()
         data = {
             "id_list": [
@@ -175,7 +176,6 @@ class DocumentAPITest(APITest):
 
         # Act
         response = self.client.post(url, data=data)
-        self.default.refresh_from_db()
 
         # Assert
         self.assertEqual(response.status_code, 200)
@@ -184,6 +184,29 @@ class DocumentAPITest(APITest):
         self.assertTrue(self.default.shared_users.filter(id=user2.id).exists())
         # Only 2 users are present
         self.assertEqual(self.default.shared_users.count(), 2)
+
+        # Case 2: Non owner tries to share
+        # Arrange
+        self.client.credentials(HTTP_AUTHORIZATION=self.get_auth_header(user1))
+        data = {
+            "id_list": [
+                user1.id,  # Already added
+                user2.id,  # New
+                "HHHHHHHHH",  # Invalid ID
+            ]
+        }
+        expected_response = {
+            "id": self.default.id,
+            "owner": self.default.owner_id,
+            "file_url": None,
+        }
+
+        # Act
+        response = self.client.post(url, data=data)
+
+        # Assert
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), expected_response)
 
     def test_put(self):
         pass
