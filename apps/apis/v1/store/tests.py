@@ -209,6 +209,7 @@ class DocumentAPITest(APITest):
         url_name = "store-v1:document-share"
         url = reverse(url_name, kwargs={"pk": self.default.id})
         user1 = UserFactory()
+        UserDocumentFactory(user=user1, document=self.default)
         data = {"id_list": [user1.id, "HHHHHHHHH"]}  # Invalid ID
         expected_response = {
             "id": self.default.id,
@@ -274,10 +275,93 @@ class DocumentAPITest(APITest):
         self.assertEqual(response.json(), expected_response)
 
     def test_put(self):
-        pass
+        # Case 1: Owner
+        # Arrange
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.get_auth_header(self.default.owner)
+        )
+        data = {}
+        expected_response = {
+            "id": self.default.id,
+            "owner": self.default.owner_id,
+            "file_url": None,
+        }
+
+        # Act
+        response = self.client.put(self.default_url, data=data)
+
+        # Assert
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), expected_response)
+
+        # Case 2: Non owner
+        # Arrange
+        user1 = UserFactory()
+        UserDocumentFactory(user=user1, document=self.default)
+        self.client.credentials(HTTP_AUTHORIZATION=self.get_auth_header(user1))
+        data = {}
+        expected_response = {"detail": "Not found."}
+
+        # Act
+        response = self.client.put(self.default_url, data=data)
+
+        # Assert
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), expected_response)
 
     def test_patch(self):
-        pass
+        # Case 1: Owner
+        # Arrange
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.get_auth_header(self.default.owner)
+        )
+        data = {}
+        expected_response = {
+            "id": self.default.id,
+            "owner": self.default.owner_id,
+            "file_url": None,
+        }
+
+        # Act
+        response = self.client.patch(self.default_url, data=data)
+
+        # Assert
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), expected_response)
+
+        # Case 2: Shared User
+        # Arrange
+        user1 = UserFactory()
+        UserDocumentFactory(user=user1, document=self.default)
+        self.client.credentials(HTTP_AUTHORIZATION=self.get_auth_header(user1))
+        data = {}
+        expected_response = {
+            "id": self.default.id,
+            "owner": self.default.owner_id,
+            "file_url": None,
+        }
+
+        # Act
+        response = self.client.patch(self.default_url, data=data)
+
+        # Assert
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), expected_response)
+
+        # Case 2: NoneShared User
+        # Arrange
+        user2 = UserFactory()
+        UserDocumentFactory(user=user2, document=self.default)
+        self.client.credentials(HTTP_AUTHORIZATION=self.get_auth_header(user2))
+        data = {}
+        expected_response = {"detail": "Not found."}
+
+        # Act
+        response = self.client.patch(self.default_url, data=data)
+
+        # Assert
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), expected_response)
 
     def test_delete(self):
         # Case 1: Non shared User

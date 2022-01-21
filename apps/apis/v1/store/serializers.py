@@ -1,3 +1,5 @@
+from typing import AnyStr
+
 from rest_framework import serializers
 
 from apps.store.models import Document, User
@@ -40,6 +42,18 @@ class DocumentSerializer(serializers.ModelSerializer):
         In order to call the methods after an instance has been updated.
         """
         instance = super().update(instance, validated_data)
+        api_caller: User = self.context.get("api_caller")
+        user_type: AnyStr = instance.get_user_type(api_caller)
+        operation: AnyStr = "Edit"
+
+        if self.partial is False:  # This is a re-upload
+            operation = "Upload"
+
+            # Truncate the file content
+            instance.truncate_the_file_content()
+
+        # Log the edit operation
+        instance.append_content_to_file(f"{user_type} - {operation}")
         return instance
 
 

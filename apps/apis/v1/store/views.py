@@ -14,6 +14,18 @@ from .serializers import (
 
 
 class DocumentViewSet(ModelViewSet):
+    """
+    Provides following APIs:
+
+    List and Detail: For Owner and Shared User
+    Create: Any user, Logging
+    Delete: For Owner
+    Update (PUT): Is the re-upload feature, For Owner, Logging
+    Partial update (PATCH): Normal edit, For Owner and Shared Users, Logging
+    Share (POST): For owner
+    Download: Any user, Logging
+    """
+
     permission_classes = (IsAuthenticated,)
     serializer_class = DocumentSerializer
     model = Document
