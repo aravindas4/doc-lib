@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     # External
     "rest_framework",
     "rest_framework.authtoken",
-    "rest_framework_swagger",
+    "drf_yasg",
     # Local
     "apps.store.apps.StoreConfig",
     "apps.utils.apps.UtilsConfig",

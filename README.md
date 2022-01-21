@@ -25,6 +25,18 @@ python manage.py migrate
 ```bash
 python manage runserver
 ```
+8. Create a user using command
+```bash 
+   python manage.py createsuperuser
+```
+
+## Local Links:
+1. Admin: `http://127.0.0.1:8000/admin/`
+Default user:` admin` 
+password: `something`
+2. Swagger: `http://127.0.0.1:8000/swagger/`
+3. Redoc: `http://127.0.0.1:8000/redoc/`
+
 ## Tech Stack
 Python 3.8, Django, Django Rest Framework, Sqlite
 
