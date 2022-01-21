@@ -117,8 +117,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         'rest_framework.authentication.TokenAuthentication',
     ],
-    "COERCE_DECIMAL_TO_STRING": False,
-    # Prevents conversion of decimal into string
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
 api_settings.DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"

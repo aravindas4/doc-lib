@@ -39,7 +39,8 @@ class User(AbstractUser, BaseModel):
         return f"{self.get_username()}, {self.email} ({self.id})"
 
     def get_token(self) -> AnyStr:
-        return Token.objects.get_or_create(user=self).key
+        token, _ = Token.objects.get_or_create(user=self)
+        return token.key
 
 
 class Document(BaseModel):

@@ -9,11 +9,10 @@ from apps.store.factory import DocumentFactory
 class APITest(TestCase):
     """Base APITest class."""
 
-    @classmethod
-    def setUpTestData(cls):
+    def setUp(self):
         """Setup base for tests."""
-        super().setUpTestData()
-        cls.client = APIClient()
+        super().setUp()
+        self.client = APIClient()
 
     @staticmethod
     def get_auth_header(user):
@@ -29,8 +28,8 @@ class DocumentAPITest(APITest):
         super().setUpTestData()
         cls.default = DocumentFactory()  # Default instance
         # Urls
-        cls.list_url = reverse("store:document-list")  # common list
-        detail_url_name = "store:document-detail"
+        cls.list_url = reverse("store-v1:document-list")  # common list
+        detail_url_name = "store-v1:document-detail"
         cls.default_url = reverse(
             detail_url_name, kwargs={"pk": cls.default.id}
         )
@@ -42,8 +41,12 @@ class DocumentAPITest(APITest):
         self.client.credentials(
             HTTP_AUTHORIZATION=self.get_auth_header(self.default.owner)
         )
-        response = self.client.get(self.recruiter_details_url)
-        self.assertEqual(response.status_code, 405)
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, 200)
+        expected_response = [
+            {"id": self.default.id, "owner": self.default.owner_id}
+        ]
+        self.assertEqual(response.json(), expected_response)
 
     def test_detail(self):
         pass
