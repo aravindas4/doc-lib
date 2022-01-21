@@ -98,22 +98,22 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": (
             "django.contrib.auth.password_validation."
-            "UserAttributeSimilarityValidator",
+            "UserAttributeSimilarityValidator"
         )
     },
     {
         "NAME": (
-            "django.contrib.auth.password_validation.MinimumLengthValidator",
+            "django.contrib.auth.password_validation.MinimumLengthValidator"
         )
     },
     {
         "NAME": (
-            "django.contrib.auth.password_validation.CommonPasswordValidator",
+            "django.contrib.auth.password_validation.CommonPasswordValidator"
         )
     },
     {
         "NAME": (
-            "django.contrib.auth.password_validation.NumericPasswordValidator",
+            "django.contrib.auth.password_validation.NumericPasswordValidator"
         )
     },
 ]
@@ -127,7 +127,7 @@ REST_FRAMEWORK = {
     ],
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_PAGINATION_CLASS": (
-        "apps.utils.pagination.CustomPageNumberPagination",
+        "apps.utils.pagination.CustomPageNumberPagination"
     ),
 }
 
