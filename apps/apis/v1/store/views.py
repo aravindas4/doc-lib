@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
@@ -14,6 +16,15 @@ class DocumentViewSet(ModelViewSet):
     queryset = model.objects.all()
 
     def get_queryset(self):
+        if self.action in [
+            "list",
+            "retrieve",
+        ]:
+            # Owner or Shared User
+            return self.queryset.filter(
+                Q(owner_id=self.request.user.id)
+                | Q(shared_users__id=self.request.user.id)
+            )
         # Owner
         return self.queryset.filter(owner_id=self.request.user.id)
 
