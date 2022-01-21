@@ -1,4 +1,4 @@
-exclude: '.git|.tox|.html|agora|settings'
+exclude: '.git|.tox|.html'
 default_stages: [commit]
 fail_fast: true
 

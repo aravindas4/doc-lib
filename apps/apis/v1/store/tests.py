@@ -1,24 +1,7 @@
-from django.test import TestCase
 from django.urls import reverse
 
-from rest_framework.test import APIClient
-
 from apps.store.factory import DocumentFactory
-
-
-class APITest(TestCase):
-    """Base APITest class."""
-
-    def setUp(self):
-        """Setup base for tests."""
-        super().setUp()
-        self.client = APIClient()
-
-    @staticmethod
-    def get_auth_header(user):
-        """Get Auth token."""
-        token_key = user.get_token()
-        return f"Token {token_key}"
+from apps.utils.tests import APITest
 
 
 class DocumentAPITest(APITest):
@@ -43,9 +26,14 @@ class DocumentAPITest(APITest):
         )
         response = self.client.get(self.list_url)
         self.assertEqual(response.status_code, 200)
-        expected_response = [
-            {"id": self.default.id, "owner": self.default.owner_id}
-        ]
+        expected_response = {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                {"id": self.default.id, "owner": self.default.owner_id}
+            ],
+        }
         self.assertEqual(response.json(), expected_response)
 
     def test_detail(self):
