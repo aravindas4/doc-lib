@@ -11,3 +11,8 @@ class DocumentViewSet(ModelViewSet):
     serializer_class = DocumentSerializer
     model = Document
     queryset = model.objects.all()
+
+    # def get_queryset(self):
+    #     return self.queryset.filter(
+    #         owner=self.request.user  # Owner
+    #     )

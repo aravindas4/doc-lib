@@ -1,4 +1,4 @@
-exclude: '.git|.tox|.html'
+exclude: '.git|.tox|.html|settings'
 default_stages: [commit]
 fail_fast: true
 
