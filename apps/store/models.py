@@ -84,6 +84,7 @@ class Document(BaseModel):
         """
         If the file exists, append the content to the end along with timestamp.
         """
+        print("HHHH")
         if self.file:  # Since field can be null
             # Format the timestamp details
             timestamp = timezone.localtime(timezone.now()).strftime(
