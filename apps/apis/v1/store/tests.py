@@ -287,4 +287,39 @@ class DocumentAPITest(APITest):
         pass
 
     def test_delete(self):
-        pass
+        # Case 2: Non shared User
+        # Arrange
+        user1 = UserFactory()
+        self.client.credentials(HTTP_AUTHORIZATION=self.get_auth_header(user1))
+        expected_response = {"detail": "Not found."}
+
+        # Act
+        response = self.client.delete(self.default_url)
+
+        # Assert
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), expected_response)
+
+        # Case: Shared User
+        # Arrange
+        UserDocumentFactory(user=user1, document=self.default)
+
+        # Act
+        response = self.client.delete(self.default_url)
+
+        # Assert
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), expected_response)
+
+        # Case : Owner
+        # Arrange
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.get_auth_header(self.default.owner)
+        )
+        expected_response = {}
+
+        # Act
+        response = self.client.delete(self.default_url)
+
+        # Assert
+        self.assertEqual(response.status_code, 204)
