@@ -25,49 +25,42 @@ class DocumentAPITest(APITest):
         # Create
         # Act
         response = self.client.post(self.list_url, data={})
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # List
         # Act
         response = self.client.get(self.list_url)
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Detail
         # Act
         response = self.client.get(self.default_url)
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Put
         # Act
         response = self.client.put(self.default_url, data={})
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Patch
         # Act
         response = self.client.patch(self.default_url, data={})
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Delete
         # Act
         response = self.client.delete(self.default_url)
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Share
         # Act
         response = self.client.post(f"{self.default_url}share/", data={})
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
@@ -341,42 +334,36 @@ class UserAPITest(APITest):
         # Create
         # Act
         response = self.client.post(self.list_url, data={})
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # List
         # Act
         response = self.client.get(self.list_url)
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Detail
         # Act
         response = self.client.get(self.default_url)
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Put
         # Act
         response = self.client.put(self.default_url, data={})
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Patch
         # Act
         response = self.client.patch(self.default_url, data={})
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Delete
         # Act
         response = self.client.delete(self.default_url)
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
