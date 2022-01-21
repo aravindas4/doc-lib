@@ -13,7 +13,7 @@ source ./doc-lib/bin/activate
 
 3. Installed the dependencies
 ```bash
-pip3 install requiremnets.txt
+pip3 install -r requiremnets.txt
 ```
 4. Move into environemnt and clone the [repo](https://github.com/aravindas4/doc-lib)
 5. Duplicate `.env.example` file into `.env` and replace the dummy values with genuine
