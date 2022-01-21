@@ -77,7 +77,7 @@ class DocumentAPITest(APITest):
         # Act
         response = self.client.get(self.list_url)
 
-        # Arrange
+        # Assert
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), expected_response)
 
@@ -94,7 +94,7 @@ class DocumentAPITest(APITest):
         # Act
         response = self.client.get(self.default_url)
 
-        # Arrange
+        # Assert
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), expected_response)
 
