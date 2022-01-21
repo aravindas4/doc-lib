@@ -1,5 +1,3 @@
-import uuid
-
 from typing import Any, AnyStr, List, NoReturn, Union
 from django.contrib.auth.models import AbstractUser
 from django.core.files.base import ContentFile
@@ -9,26 +7,7 @@ from django.utils import timezone
 from rest_framework.authtoken.models import Token
 from rest_framework.settings import api_settings
 
-
-def get_short_uuid():
-    """Generate Short UUID."""
-    return str(uuid.uuid4()).replace("-", "")[:10].upper()
-
-
-class BaseModel(models.Model):
-    """
-    Abstract model that acts as parent all the concrete models in the project.
-    """
-
-    # Makes sure that an pk is tamper-proof and unpredictable
-    id = models.CharField(
-        max_length=12, default=get_short_uuid, editable=False, primary_key=True
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
+from apps.utils.models import BaseModel
 
 
 class User(AbstractUser, BaseModel):
