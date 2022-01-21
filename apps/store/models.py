@@ -1,6 +1,6 @@
 import uuid
 
-from typing import AnyStr, NoReturn, Union
+from typing import Any, AnyStr, List, NoReturn, Union
 from django.contrib.auth.models import AbstractUser
 from django.core.files.base import ContentFile
 from django.db import models
@@ -95,6 +95,24 @@ class Document(BaseModel):
             # Add the timestamp details to content
             file.write(f"{timestamp} - {content} \n")
             file.close()
+
+    def add_shared_users(self, id_list: List[AnyStr]) -> NoReturn:
+        """Add valid users to the document."""
+        # Exclude already added users
+        user_queryset = User.objects.filter(id__in=id_list).exclude(
+            id__in=self.shared_users.values("id")
+        )
+
+        # Create User document objects
+        user_document_objects: List[Any] = [
+            UserDocument(document=self, user=user)
+            for user in user_queryset.iterator()
+        ]
+
+        # Create in bulk manner
+        UserDocument.objects.bulk_create(
+            user_document_objects, ignore_conflicts=True  # If any
+        )
 
 
 class UserDocument(BaseModel):
