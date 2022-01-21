@@ -17,3 +17,11 @@ class DocumentFactory(factory.django.DjangoModelFactory):
         model = "store.Document"
 
     owner = factory.SubFactory(UserFactory)
+
+
+class UserDocumentFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "store.UserDocument"
+
+    user = factory.SubFactory(UserFactory)
+    document = factory.SubFactory(DocumentFactory)
