@@ -55,10 +55,10 @@ class Document(BaseModel):
     # Local file storage reference
     file = models.FileField(blank=True, upload_to="documents")
 
-    # Shared users
+    # Collaborators
     shared_users = models.ManyToManyField(
         User,
-        through="UserDocument",  # Explicit because to add future changes
+        through="UserDocument",  # Explicit, because to add future changes
         related_name="shared_documents",
     )
 

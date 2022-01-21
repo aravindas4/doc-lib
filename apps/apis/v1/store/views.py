@@ -20,10 +20,7 @@ class DocumentViewSet(ModelViewSet):
     queryset = model.objects.all()
 
     def get_queryset(self):
-        if self.action in [
-            "list",
-            "retrieve",
-        ]:
+        if self.action in ["list", "retrieve", "partial_update"]:
             # Owner or Shared User
             return self.queryset.filter(
                 Q(owner_id=self.request.user.id)
@@ -35,6 +32,12 @@ class DocumentViewSet(ModelViewSet):
     def perform_create(self, serializer):
         # Saving the owner of the document
         serializer.save(owner=self.request.user)
+
+    def get_serializer_context(self):
+        """Overridden to track the api caller."""
+        context = super().get_serializer_context()
+        context["api_caller"] = self.request.user
+        return context
 
     @action(methods=["POST"], detail=True, url_path="share")
     def share(self, request, *args, **kwargs):
