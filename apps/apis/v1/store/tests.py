@@ -25,49 +25,42 @@ class DocumentAPITest(APITest):
         # Create
         # Act
         response = self.client.post(self.list_url, data={})
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # List
         # Act
         response = self.client.get(self.list_url)
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Detail
         # Act
         response = self.client.get(self.default_url)
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Put
         # Act
         response = self.client.put(self.default_url, data={})
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Patch
         # Act
         response = self.client.patch(self.default_url, data={})
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Delete
         # Act
         response = self.client.delete(self.default_url)
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
         # Share
         # Act
         response = self.client.post(f"{self.default_url}share/", data={})
-
         # Assert
         self.assertEqual(response.status_code, 401)
 
@@ -322,3 +315,162 @@ class DocumentAPITest(APITest):
 
         # Assert
         self.assertEqual(response.status_code, 204)
+
+
+class UserAPITest(APITest):
+    @classmethod
+    def setUpTestData(cls):
+        """Setup base data for tests."""
+        super().setUpTestData()
+        cls.default = UserFactory()  # Default instance
+        # Urls
+        cls.list_url = reverse("store-v1:user-list")  # common list
+        detail_url_name = "store-v1:user-detail"
+        cls.default_url = reverse(
+            detail_url_name, kwargs={"pk": cls.default.id}
+        )
+
+    def test_no_auth(self):
+        # Create
+        # Act
+        response = self.client.post(self.list_url, data={})
+        # Assert
+        self.assertEqual(response.status_code, 401)
+
+        # List
+        # Act
+        response = self.client.get(self.list_url)
+        # Assert
+        self.assertEqual(response.status_code, 401)
+
+        # Detail
+        # Act
+        response = self.client.get(self.default_url)
+        # Assert
+        self.assertEqual(response.status_code, 401)
+
+        # Put
+        # Act
+        response = self.client.put(self.default_url, data={})
+        # Assert
+        self.assertEqual(response.status_code, 401)
+
+        # Patch
+        # Act
+        response = self.client.patch(self.default_url, data={})
+        # Assert
+        self.assertEqual(response.status_code, 401)
+
+        # Delete
+        # Act
+        response = self.client.delete(self.default_url)
+        # Assert
+        self.assertEqual(response.status_code, 401)
+
+    def test_list(self):
+        # Case 1: Owner
+        # Arrange
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.get_auth_header(self.default)
+        )
+        expected_response = {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.default.id,
+                    "first_name": self.default.first_name,
+                    "last_name": self.default.last_name,
+                    "username": self.default.username,
+                    "email": self.default.email,
+                }
+            ],
+        }
+
+        # Act
+        response = self.client.get(self.list_url)
+
+        # Assert
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), expected_response)
+
+    def test_detail(self):
+        # Case 1: Owner
+        # Arrange
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.get_auth_header(self.default)
+        )
+        expected_response = {
+            "id": self.default.id,
+            "first_name": self.default.first_name,
+            "last_name": self.default.last_name,
+            "username": self.default.username,
+            "email": self.default.email,
+        }
+
+        # Act
+        response = self.client.get(self.default_url)
+
+        # Assert
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), expected_response)
+
+    def test_post(self):
+        # Arrange
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.get_auth_header(self.default)
+        )
+        data = {}
+
+        # Act
+        response = self.client.post(self.list_url, data=data)
+        expected_response = {"detail": 'Method "POST" not allowed.'}
+
+        # Assert
+        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.json(), expected_response)
+
+    def test_put(self):
+        # Arrange
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.get_auth_header(self.default)
+        )
+        data = {}
+
+        # Act
+        response = self.client.put(self.list_url, data=data)
+        expected_response = {"detail": 'Method "PUT" not allowed.'}
+
+        # Assert
+        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.json(), expected_response)
+
+    def test_patch(self):
+        # Arrange
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.get_auth_header(self.default)
+        )
+        data = {}
+
+        # Act
+        response = self.client.patch(self.list_url, data=data)
+        expected_response = {"detail": 'Method "PATCH" not allowed.'}
+
+        # Assert
+        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.json(), expected_response)
+
+    def test_delete(self):
+        # Case 1: Non shared User
+        # Arrange
+        user1 = UserFactory()
+        self.client.credentials(HTTP_AUTHORIZATION=self.get_auth_header(user1))
+        expected_response = {"detail": 'Method "DELETE" not allowed.'}
+
+        # Act
+        response = self.client.delete(self.default_url)
+
+        # Assert
+        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.json(), expected_response)

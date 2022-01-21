@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.store.models import Document
+from apps.store.models import Document, User
 
 
 class DocumentSerializer(serializers.ModelSerializer):
@@ -33,3 +33,9 @@ class StringListSerializer(serializers.Serializer):
     id_list = serializers.ListField(
         child=serializers.CharField(min_length=1), required=True
     )
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "email", "username", "first_name", "last_name")

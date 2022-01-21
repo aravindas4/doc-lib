@@ -2,11 +2,15 @@ from django.db.models import Q
 
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from apps.store.models import Document
+from apps.store.models import Document, User
 
-from .serializers import DocumentSerializer, StringListSerializer
+from .serializers import (
+    DocumentSerializer,
+    StringListSerializer,
+    UserSerializer,
+)
 
 
 class DocumentViewSet(ModelViewSet):
@@ -41,3 +45,10 @@ class DocumentViewSet(ModelViewSet):
 
         instance.add_shared_users(serializer.validated_data["id_list"])
         return self.retrieve(request, *args, **kwargs)
+
+
+class UserViewSet(ReadOnlyModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserSerializer
+    model = User
+    queryset = model.objects.all()
