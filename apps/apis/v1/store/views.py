@@ -15,3 +15,7 @@ class DocumentViewSet(ModelViewSet):
     def get_queryset(self):
         # Owner
         return self.queryset.filter(owner_id=self.request.user.id)
+
+    def perform_create(self, serializer):
+        # Saving the owner of the document
+        serializer.save(owner=self.request.user)

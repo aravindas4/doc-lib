@@ -70,7 +70,11 @@ class DocumentAPITest(APITest):
             "next": None,
             "previous": None,
             "results": [
-                {"id": self.default.id, "owner": self.default.owner_id}
+                {
+                    "id": self.default.id,
+                    "owner": self.default.owner_id,
+                    "file_url": None,
+                }
             ],
         }
 
@@ -89,6 +93,7 @@ class DocumentAPITest(APITest):
         expected_response = {
             "id": self.default.id,
             "owner": self.default.owner_id,
+            "file_url": None,
         }
 
         # Act
@@ -96,6 +101,27 @@ class DocumentAPITest(APITest):
 
         # Assert
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), expected_response)
+
+    def test_post(self):
+        # Arrange
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.get_auth_header(self.default.owner)
+        )
+        data = {}
+        base_response = {"owner": self.default.owner_id, "file_url": None}
+
+        # Act
+        response = self.client.post(self.list_url, data=data)
+        document_id = response.json().get("id")  # It is unpredictable
+        expected_response = {
+            **base_response,
+            "id": document_id,
+            "file_url": f"/documents/{document_id}.txt",
+        }
+
+        # Assert
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json(), expected_response)
 
     def test_put(self):
