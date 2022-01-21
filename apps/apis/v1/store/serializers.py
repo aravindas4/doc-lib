@@ -53,7 +53,6 @@ class DocumentSerializer(serializers.ModelSerializer):
             instance.truncate_the_file_content()
 
         # Log the edit operation
-        print("HHHH")
         instance.append_content_to_file(f"{user_type} - {operation}")
         return instance
 
