@@ -1,5 +1,3 @@
-import uuid
-
 from typing import Any, AnyStr, List, NoReturn, Union
 from django.contrib.auth.models import AbstractUser
 from django.core.files.base import ContentFile
