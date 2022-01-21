@@ -12,7 +12,6 @@ class DocumentViewSet(ModelViewSet):
     model = Document
     queryset = model.objects.all()
 
-    # def get_queryset(self):
-    #     return self.queryset.filter(
-    #         owner=self.request.user  # Owner
-    #     )
+    def get_queryset(self):
+        # Owner
+        return self.queryset.filter(owner_id=self.request.user.id)
