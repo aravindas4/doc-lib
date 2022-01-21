@@ -3,7 +3,7 @@ import uuid
 from typing import Any, AnyStr, List, NoReturn, Union
 from django.contrib.auth.models import AbstractUser
 from django.core.files.base import ContentFile
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 
 from rest_framework.authtoken.models import Token
@@ -55,10 +55,10 @@ class Document(BaseModel):
     # Local file storage reference
     file = models.FileField(blank=True, upload_to="documents")
 
-    # Shared users
+    # Collaborators
     shared_users = models.ManyToManyField(
         User,
-        through="UserDocument",  # Explicit because to add future changes
+        through="UserDocument",  # Explicit, because to add future changes
         related_name="shared_documents",
     )
 
@@ -84,7 +84,7 @@ class Document(BaseModel):
         """
         If the file exists, append the content to the end along with timestamp.
         """
-        if self.file:
+        if self.file:  # Since field can be null
             # Format the timestamp details
             timestamp = timezone.localtime(timezone.now()).strftime(
                 api_settings.DATETIME_FORMAT
@@ -113,6 +113,26 @@ class Document(BaseModel):
         UserDocument.objects.bulk_create(
             user_document_objects, ignore_conflicts=True  # If any
         )
+
+    def get_user_type(self, user: User) -> AnyStr:
+        if self.owner == user:
+            return "Owner"
+
+        return "Collaborator"
+
+    def truncate_the_file_content(self) -> NoReturn:
+        """Truncates the file."""
+        # Make sure this is thread safe.
+        cls = self.__class__
+
+        with transaction.atomic():
+            instance = cls.objects.select_for_update().get(pk=self.pk)
+            instance.save(update_fields=["updated_at"])
+            if self.file:  # Since field can be null
+                # Open the file in r+ mode
+                file = open("sample.txt", "r+")
+                file.truncate(0)
+                file.close()
 
 
 class UserDocument(BaseModel):
