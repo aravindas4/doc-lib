@@ -130,7 +130,7 @@ class Document(BaseModel):
             instance.save(update_fields=["updated_at"])
             if self.file:  # Since field can be null
                 # Open the file in r+ mode
-                file = open("sample.txt", "r+")
+                file = open(self.file.path, "r+")
                 file.truncate(0)
                 file.close()
 
