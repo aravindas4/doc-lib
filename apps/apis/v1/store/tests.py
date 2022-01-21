@@ -5,6 +5,7 @@ from apps.store.factory import (
     UserFactory,
     UserDocumentFactory,
 )
+from apps.store.models import Document
 from apps.utils.tests import APITest
 
 
@@ -199,6 +200,11 @@ class DocumentAPITest(APITest):
         # Assert
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json(), expected_response)
+        self.assertTrue(
+            Document.objects.filter(
+                id=document_id, file__isnull=False
+            ).exists()
+        )
 
     def test_share(self):
         # Case 1: First attempt
@@ -348,10 +354,9 @@ class DocumentAPITest(APITest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), expected_response)
 
-        # Case 2: NoneShared User
+        # Case 2: Non Shared User
         # Arrange
         user2 = UserFactory()
-        UserDocumentFactory(user=user2, document=self.default)
         self.client.credentials(HTTP_AUTHORIZATION=self.get_auth_header(user2))
         data = {}
         expected_response = {"detail": "Not found."}
